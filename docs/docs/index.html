@@ -100,6 +100,7 @@ If you disable them in the config file, revive will run over 6x faster than goli
 <li><a href="#continuous-integration">Continuous Integration</a></li>
 <li><a href="#linter-aggregators">Linter aggregators</a></li>
 <li><a href="#golangci-lint">golangci-lint</a></li>
+<li><a href="#megalinter">MegaLinter</a></li>
 <li><a href="#command-line-flags">Command Line Flags</a></li>
 <li><a href="#sample-invocations">Sample Invocations</a></li>
 <li><a href="#comment-directives">Comment Directives</a></li>
@@ -110,12 +111,7 @@ If you disable them in the config file, revive will run over 6x faster than goli
 </ul>
 </li>
 <li><a href="#available-rules">Available Rules</a></li>
-<li>
-<p><a href="#configurable-rules">Configurable rules</a></p>
-<ul>
-<li><a href="#var-naming"><code class="language-text">var-naming</code></a></li>
-</ul>
-</li>
+<li><a href="#configurable-rules">Configurable rules</a></li>
 <li>
 <p><a href="#available-formatters">Available Formatters</a></p>
 <ul>
@@ -154,7 +150,6 @@ If you disable them in the config file, revive will run over 6x faster than goli
 <li><a href="#all">All</a></li>
 </ul>
 </li>
-<li><a href="#star-history">Star History</a></li>
 <li><a href="#license">License</a></li>
 </ul>
 <!-- tocstop -->
@@ -173,13 +168,13 @@ If you disable them in the config file, revive will run over 6x faster than goli
 <div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">go <span class="token function">install</span> github.com/mgechev/revive@HEAD</code></pre></div>
 <h3 id="docker"><a href="#docker" aria-label="docker permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Docker</h3>
 <p>You can run <code class="language-text">revive</code> using Docker to avoid installing it directly on your system:</p>
-<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">docker run -v <span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token builtin class-name">pwd</span><span class="token variable">)</span></span>"</span>:/var/YOUR_REPOSITORY ghcr.io/mgechev/revive:v1.10.0 -config /var/YOUR_REPOSITORY/revive.toml -formatter stylish ./var/YOUR_REPOSITORY/<span class="token punctuation">..</span>.</code></pre></div>
+<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">docker run -v <span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token builtin class-name">pwd</span><span class="token variable">)</span></span>"</span>:/var/YOUR_REPOSITORY ghcr.io/mgechev/revive:v1.15.0 -config /var/YOUR_REPOSITORY/revive.toml -formatter stylish ./var/YOUR_REPOSITORY/<span class="token punctuation">..</span>.</code></pre></div>
 <p><em>Note</em>: Replace <code class="language-text">YOUR_REPOSITORY</code> with the path to your repository.</p>
 <p>A volume must be mounted to share the current repository with the container.
 For more details, refer to the <a href="https://docs.docker.com/storage/bind-mounts/">bind mounts Docker documentation</a>.</p>
 <ul>
 <li><code class="language-text">-v</code>: Mounts the current directory (<code class="language-text">$(pwd)</code>) to <code class="language-text">/var/YOUR_REPOSITORY</code> inside the container.</li>
-<li><code class="language-text">ghcr.io/mgechev/revive:v1.10.0</code>: Specifies the Docker image and its version.</li>
+<li><code class="language-text">ghcr.io/mgechev/revive:v1.15.0</code>: Specifies the Docker image and its version.</li>
 <li><code class="language-text">revive</code>: The command to run inside the container.</li>
 <li>Flags like <code class="language-text">-config</code> and <code class="language-text">-formatter</code> are the same as when using the binary directly.</li>
 </ul>
@@ -251,6 +246,9 @@ See the <a href="https://golangci-lint.run/usage/linters/#revive">golangci-lint 
 <p>Please notice that if no particular configuration is provided, <code class="language-text">revive</code> will behave as <code class="language-text">golint</code> does, i.e. all <code class="language-text">golint</code> rules are enabled
 (the <a href="#available-rules">Available Rules table</a> details what are the <code class="language-text">golint</code> rules).
 When a configuration is provided, only rules in the configuration are enabled.</p>
+<h4 id="megalinter"><a href="#megalinter" aria-label="megalinter permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>MegaLinter</h4>
+<p><a href="https://megalinter.io/">MegaLinter</a>, an open-source linters aggregator for CI, runs <code class="language-text">revive</code> on Go projects out of the box.
+See its <a href="https://megalinter.io/latest/descriptors/go_revive/">revive documentation page</a> for configuration details.</p>
 <h3 id="command-line-flags"><a href="#command-line-flags" aria-label="command line flags permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Command Line Flags</h3>
 <p><code class="language-text">revive</code> accepts the following command line parameters:</p>
 <ul>
@@ -271,7 +269,7 @@ If no exclusion patterns are specified, <code class="language-text">vendor/...</
 </ul>
 </li>
 <li><code class="language-text">-max_open_files</code> -  maximum number of open files at the same time. Defaults to unlimited.</li>
-<li><code class="language-text">-set_exit_status</code> - set exit status to 1 if any issues are found, overwrites <code class="language-text">errorCode</code> and <code class="language-text">warningCode</code> in config.</li>
+<li><code class="language-text">-set_exit_status</code> - set exit status to 1 if any issues are found, overwrites <code class="language-text">error-code</code> and <code class="language-text">warning-code</code> in config.</li>
 <li><code class="language-text">-version</code> - get revive version.</li>
 </ul>
 <h3 id="sample-invocations"><a href="#sample-invocations" aria-label="sample invocations permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Sample Invocations</h3>
@@ -308,10 +306,17 @@ If you skip <code class="language-text">revive:enable</code>, the linter will be
 <p>in the configuration. You can set the severity (defaults to <em>warning</em>) of the violation of this directive</p>
 <div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">directive.specify-disable-reason</span><span class="token punctuation">]</span>
 <span class="token key property">severity</span> <span class="token punctuation">=</span> <span class="token string">"error"</span></code></pre></div>
+<p>Similarly, you can enforce specifying rule names in disable directives by adding</p>
+<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">directive.specify-disable-rule</span><span class="token punctuation">]</span></code></pre></div>
+<p>This forbids "naked" <code class="language-text">//revive:disable</code>, <code class="language-text">//revive:disable-line</code>, and <code class="language-text">//revive:disable-next-line</code> directives
+and requires specifying at least one rule name, e.g. <code class="language-text">//revive:disable:cyclomatic</code> or <code class="language-text">//revive:disable-next-line:cyclomatic</code>.
+You can set the severity (defaults to <em>warning</em>) of the violation of this directive</p>
+<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">directive.specify-disable-rule</span><span class="token punctuation">]</span>
+<span class="token key property">severity</span> <span class="token punctuation">=</span> <span class="token string">"error"</span></code></pre></div>
 <h3 id="configuration"><a href="#configuration" aria-label="configuration permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuration</h3>
 <p><code class="language-text">revive</code> can be configured with a TOML file. Here's a sample configuration with an explanation of the individual properties:</p>
 <div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token comment"># When set to false, ignores files with "GENERATED" header, similar to golint</span>
-<span class="token key property">ignoreGeneratedHeader</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
+<span class="token key property">ignore-generated-header</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
 
 <span class="token comment"># Sets the default severity to "warning"</span>
 <span class="token key property">severity</span> <span class="token punctuation">=</span> <span class="token string">"warning"</span>
@@ -321,10 +326,10 @@ If you skip <code class="language-text">revive:enable</code>, the linter will be
 <span class="token key property">confidence</span> <span class="token punctuation">=</span> <span class="token number">0.8</span>
 
 <span class="token comment"># Sets the error code for failures with the "error" severity</span>
-<span class="token key property">errorCode</span> <span class="token punctuation">=</span> <span class="token number">0</span>
+<span class="token key property">error-code</span> <span class="token punctuation">=</span> <span class="token number">0</span>
 
 <span class="token comment"># Sets the error code for failures with severity "warning"</span>
-<span class="token key property">warningCode</span> <span class="token punctuation">=</span> <span class="token number">0</span>
+<span class="token key property">warning-code</span> <span class="token punctuation">=</span> <span class="token number">0</span>
 
 <span class="token comment"># Configuration of the `cyclomatic` rule. Here we specify that</span>
 <span class="token comment"># the rule should fail if it detects code with higher complexity than 10.</span>
@@ -337,63 +342,63 @@ If you skip <code class="language-text">revive:enable</code>, the linter will be
 <p>By default <code class="language-text">revive</code> will enable only the linting rules that are named in the configuration file.
 For example, the previous configuration file makes <code class="language-text">revive</code> to enable only <em>cyclomatic</em> and <em>package-comments</em> linting rules.</p>
 <p>To enable default rules you need to use:</p>
-<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">enableDefaultRules</span> <span class="token punctuation">=</span> <span class="token boolean">true</span></code></pre></div>
+<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">enable-default-rules</span> <span class="token punctuation">=</span> <span class="token boolean">true</span></code></pre></div>
 <p>This will enable all rules available in <code class="language-text">golint</code> and use their default configuration (i.e. the way they are hardcoded in <code class="language-text">golint</code>).
 The default configuration of <code class="language-text">revive</code> can be found at <code class="language-text">defaults.toml</code>.</p>
 <p>To enable all available rules you need to add:</p>
-<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">enableAllRules</span> <span class="token punctuation">=</span> <span class="token boolean">true</span></code></pre></div>
+<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">enable-all-rules</span> <span class="token punctuation">=</span> <span class="token boolean">true</span></code></pre></div>
 <p>This will enable all available rules no matter what rules are named in the configuration file.</p>
-<p>Options <code class="language-text">enableAllRules</code> and <code class="language-text">enableDefaultRules</code> cannot be combined.</p>
+<p>Options <code class="language-text">enable-all-rules</code> and <code class="language-text">enable-default-rules</code> cannot be combined.</p>
 <p>To disable a rule, you simply mark it as disabled in the configuration.
 For example:</p>
 <div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">rule.line-length-limit</span><span class="token punctuation">]</span>
-<span class="token key property">Disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span></code></pre></div>
+<span class="token key property">disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span></code></pre></div>
 <p>When enabling all rules you still need/can provide specific configurations for rules.
 The following file is an example configuration where all rules are enabled, except for those that are explicitly disabled,
 and some rules are configured with particular arguments:</p>
 <div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">severity</span> <span class="token punctuation">=</span> <span class="token string">"warning"</span>
 <span class="token key property">confidence</span> <span class="token punctuation">=</span> <span class="token number">0.8</span>
-<span class="token key property">errorCode</span> <span class="token punctuation">=</span> <span class="token number">0</span>
-<span class="token key property">warningCode</span> <span class="token punctuation">=</span> <span class="token number">0</span>
+<span class="token key property">error-code</span> <span class="token punctuation">=</span> <span class="token number">0</span>
+<span class="token key property">warning-code</span> <span class="token punctuation">=</span> <span class="token number">0</span>
 
 <span class="token comment"># Enable all available rules</span>
-<span class="token key property">enableAllRules</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
+<span class="token key property">enable-all-rules</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
 
 <span class="token comment"># Disabled rules</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.blank-imports</span><span class="token punctuation">]</span>
-<span class="token key property">Disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
+<span class="token key property">disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.file-header</span><span class="token punctuation">]</span>
-<span class="token key property">Disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
+<span class="token key property">disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.max-public-structs</span><span class="token punctuation">]</span>
-<span class="token key property">Disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
+<span class="token key property">disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.line-length-limit</span><span class="token punctuation">]</span>
-<span class="token key property">Disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
+<span class="token key property">disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.function-length</span><span class="token punctuation">]</span>
-<span class="token key property">Disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
+<span class="token key property">disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.banned-characters</span><span class="token punctuation">]</span>
-<span class="token key property">Disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
+<span class="token key property">disabled</span> <span class="token punctuation">=</span> <span class="token boolean">true</span>
 
 <span class="token comment"># Rule tuning</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.argument-limit</span><span class="token punctuation">]</span>
-<span class="token key property">Arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span>
+<span class="token key property">arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.cyclomatic</span><span class="token punctuation">]</span>
-<span class="token key property">Arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span>
+<span class="token key property">arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.cognitive-complexity</span><span class="token punctuation">]</span>
-<span class="token key property">Arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span>
+<span class="token key property">arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.function-result-limit</span><span class="token punctuation">]</span>
-<span class="token key property">Arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span>
+<span class="token key property">arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.error-strings</span><span class="token punctuation">]</span>
-<span class="token key property">Arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"mypackage.Error"</span><span class="token punctuation">]</span></code></pre></div>
+<span class="token key property">arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"mypackage.Error"</span><span class="token punctuation">]</span></code></pre></div>
 <h3 id="custom-configuration"><a href="#custom-configuration" aria-label="custom configuration permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Custom Configuration</h3>
 <div class="gatsby-highlight" data-language="shell"><pre class="language-shell"><code class="language-shell">revive -config config.toml -formatter friendly github.com/mgechev/revive</code></pre></div>
 <p>This will use <code class="language-text">config.toml</code>, the <code class="language-text">friendly</code> formatter, and will run linting over the <code class="language-text">github.com/mgechev/revive</code> package.</p>
 <h3 id="recommended-configuration"><a href="#recommended-configuration" aria-label="recommended configuration permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Recommended Configuration</h3>
 <p>The following snippet contains the recommended <code class="language-text">revive</code> configuration that you can use in your project:</p>
-<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">ignoreGeneratedHeader</span> <span class="token punctuation">=</span> <span class="token boolean">false</span>
+<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">ignore-generated-header</span> <span class="token punctuation">=</span> <span class="token boolean">false</span>
 <span class="token key property">severity</span> <span class="token punctuation">=</span> <span class="token string">"warning"</span>
 <span class="token key property">confidence</span> <span class="token punctuation">=</span> <span class="token number">0.8</span>
-<span class="token key property">errorCode</span> <span class="token punctuation">=</span> <span class="token number">0</span>
-<span class="token key property">warningCode</span> <span class="token punctuation">=</span> <span class="token number">0</span>
+<span class="token key property">error-code</span> <span class="token punctuation">=</span> <span class="token number">0</span>
+<span class="token key property">warning-code</span> <span class="token punctuation">=</span> <span class="token number">0</span>
 
 <span class="token punctuation">[</span><span class="token table class-name">rule.blank-imports</span><span class="token punctuation">]</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.context-as-argument</span><span class="token punctuation">]</span>
@@ -421,16 +426,16 @@ and some rules are configured with particular arguments:</p>
 <h3 id="rule-level-file-excludes"><a href="#rule-level-file-excludes" aria-label="rule level file excludes permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Rule-level file excludes</h3>
 <p>You also can setup custom excludes for each rule.</p>
 <p>It's an alternative for the global <code class="language-text">-exclude</code> program arg.</p>
-<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">ignoreGeneratedHeader</span> <span class="token punctuation">=</span> <span class="token boolean">false</span>
+<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token key property">ignore-generated-header</span> <span class="token punctuation">=</span> <span class="token boolean">false</span>
 <span class="token key property">severity</span> <span class="token punctuation">=</span> <span class="token string">"warning"</span>
 <span class="token key property">confidence</span> <span class="token punctuation">=</span> <span class="token number">0.8</span>
-<span class="token key property">errorCode</span> <span class="token punctuation">=</span> <span class="token number">0</span>
-<span class="token key property">warningCode</span> <span class="token punctuation">=</span> <span class="token number">0</span>
+<span class="token key property">error-code</span> <span class="token punctuation">=</span> <span class="token number">0</span>
+<span class="token key property">warning-code</span> <span class="token punctuation">=</span> <span class="token number">0</span>
 
 <span class="token punctuation">[</span><span class="token table class-name">rule.blank-imports</span><span class="token punctuation">]</span>
-<span class="token key property">Exclude</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"**/*.pb.go"</span><span class="token punctuation">]</span>
+<span class="token key property">exclude</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"**/*.pb.go"</span><span class="token punctuation">]</span>
 <span class="token punctuation">[</span><span class="token table class-name">rule.context-as-argument</span><span class="token punctuation">]</span>
-<span class="token key property">Exclude</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"src/somepkg/*.go"</span><span class="token punctuation">,</span> <span class="token string">"TEST"</span><span class="token punctuation">]</span></code></pre></div>
+<span class="token key property">exclude</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"src/somepkg/*.go"</span><span class="token punctuation">,</span> <span class="token string">"TEST"</span><span class="token punctuation">]</span></code></pre></div>
 <p>You can use the following exclude patterns</p>
 <ol>
 <li>full paths to files <code class="language-text">src/pkg/mypkg/some.go</code></li>
@@ -445,13 +450,14 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <p>NOTE: do not mess with <code class="language-text">exclude</code> that can  be used at the top level of TOML file, that means "exclude package patterns", not "exclude file patterns"</p>
 </blockquote>
 <h2 id="available-rules"><a href="#available-rules" aria-label="available rules permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Available Rules</h2>
-<p>List of all available rules. The rules ported from <code class="language-text">golint</code> are left unchanged and indicated in the <code class="language-text">golint</code> column.</p>
+<p>List of all <a href="./RULES_DESCRIPTIONS.md">available rules</a>.</p>
 <table>
 <thead>
 <tr>
 <th>Name</th>
 <th align="center">Config</th>
 <th align="left">Description</th>
+<th align="center">Go version</th>
 <th align="center"><code class="language-text">golint</code></th>
 <th align="center">Typed</th>
 </tr>
@@ -461,6 +467,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#add-constant"><code class="language-text">add-constant</code></a></td>
 <td align="center">map</td>
 <td align="left">Suggests using constant for magic numbers and string literals</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -468,6 +475,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#argument-limit"><code class="language-text">argument-limit</code></a></td>
 <td align="center">int (defaults to 8)</td>
 <td align="left">Specifies the maximum number of arguments a function can receive</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -475,6 +483,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#atomic"><code class="language-text">atomic</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Check for common mistaken usages of the <code class="language-text">sync/atomic</code> package</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -482,6 +491,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#banned-characters"><code class="language-text">banned-characters</code></a></td>
 <td align="center">[]string (defaults to []string{})</td>
 <td align="left">Checks banned characters in identifiers</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -489,6 +499,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#bare-return"><code class="language-text">bare-return</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on bare returns</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -496,6 +507,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#blank-imports"><code class="language-text">blank-imports</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Disallows blank imports</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -503,6 +515,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#bool-literal-in-expr"><code class="language-text">bool-literal-in-expr</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Suggests removing Boolean literals from logic expressions</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -510,6 +523,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#call-to-gc"><code class="language-text">call-to-gc</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on explicit call to the garbage collector</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -517,6 +531,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#cognitive-complexity"><code class="language-text">cognitive-complexity</code></a></td>
 <td align="center">int (defaults to 7)</td>
 <td align="left">Sets restriction for maximum Cognitive complexity.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -524,6 +539,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#comment-spacings"><code class="language-text">comment-spacings</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Warns on malformed comments</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -531,6 +547,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#comments-density"><code class="language-text">comments-density</code></a></td>
 <td align="center">int (defaults to 0)</td>
 <td align="left">Enforces a minimum comment / code relation</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -538,6 +555,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#confusing-naming"><code class="language-text">confusing-naming</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on methods with names that differ only by capitalization</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -545,6 +563,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#confusing-results"><code class="language-text">confusing-results</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Suggests to name potentially confusing function results</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -552,6 +571,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#constant-logical-expr"><code class="language-text">constant-logical-expr</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on constant logical expressions</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -559,6 +579,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#context-as-argument"><code class="language-text">context-as-argument</code></a></td>
 <td align="center">n/a</td>
 <td align="left"><code class="language-text">context.Context</code> should be the first argument of a function.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -566,6 +587,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#context-keys-type"><code class="language-text">context-keys-type</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Disallows the usage of basic types in <code class="language-text">context.WithValue</code>.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">yes</td>
 </tr>
@@ -573,6 +595,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#cyclomatic"><code class="language-text">cyclomatic</code></a></td>
 <td align="center">int (defaults to 10)</td>
 <td align="left">Sets restriction for maximum Cyclomatic complexity.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -580,6 +603,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#datarace"><code class="language-text">datarace</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots potential dataraces</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -587,6 +611,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#deep-exit"><code class="language-text">deep-exit</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Looks for program exits in funcs other than <code class="language-text">main()</code> or <code class="language-text">init()</code></td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -594,6 +619,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#defer"><code class="language-text">defer</code></a></td>
 <td align="center">map</td>
 <td align="left">Warns on some <a href="https://blog.learngoprogramming.com/5-gotchas-of-defer-in-go-golang-part-iii-36a1ab3d6ef1">defer gotchas</a></td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -601,6 +627,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#dot-imports"><code class="language-text">dot-imports</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Forbids <code class="language-text">.</code> imports.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -608,6 +635,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#duplicated-imports"><code class="language-text">duplicated-imports</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Looks for packages that are imported two or more times</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -615,6 +643,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#early-return"><code class="language-text">early-return</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Spots if-then-else statements where the predicate may be inverted to reduce nesting</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -622,6 +651,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#empty-block"><code class="language-text">empty-block</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on empty code blocks</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -629,6 +659,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#empty-lines"><code class="language-text">empty-lines</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns when there are heading or trailing newlines in a block</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -636,6 +667,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#epoch-naming"><code class="language-text">epoch-naming</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Enforces naming conventions for epoch time variables</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">yes</td>
 </tr>
@@ -643,6 +675,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#enforce-map-style"><code class="language-text">enforce-map-style</code></a></td>
 <td align="center">string (defaults to "any")</td>
 <td align="left">Enforces consistent usage of <code class="language-text">make(map[type]type)</code> or <code class="language-text">map[type]type{}</code> for map initialization. Does not affect <code class="language-text">make(map[type]type, size)</code> constructions.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -650,6 +683,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#enforce-repeated-arg-type-style"><code class="language-text">enforce-repeated-arg-type-style</code></a></td>
 <td align="center">string (defaults to "any")</td>
 <td align="left">Enforces consistent style for repeated argument and/or return value types.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -657,6 +691,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#enforce-slice-style"><code class="language-text">enforce-slice-style</code></a></td>
 <td align="center">string (defaults to "any")</td>
 <td align="left">Enforces consistent usage of <code class="language-text">make([]type, 0)</code> or <code class="language-text">[]type{}</code> for slice initialization. Does not affect <code class="language-text">make(map[type]type, non_zero_len, or_non_zero_cap)</code> constructions.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -664,6 +699,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#enforce-switch-style"><code class="language-text">enforce-switch-style</code></a></td>
 <td align="center">[]string (defaults to enforce occurrence and position)</td>
 <td align="left">Enforces consistent usage of <code class="language-text">default</code> on <code class="language-text">switch</code> statements.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -671,6 +707,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#error-naming"><code class="language-text">error-naming</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Naming of error variables.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -678,6 +715,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#error-return"><code class="language-text">error-return</code></a></td>
 <td align="center">n/a</td>
 <td align="left">The error return parameter should be last.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -685,6 +723,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#error-strings"><code class="language-text">error-strings</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Conventions around error strings.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -692,6 +731,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#errorf"><code class="language-text">errorf</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Should replace <code class="language-text">errors.New(fmt.Sprintf())</code> with <code class="language-text">fmt.Errorf()</code></td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">yes</td>
 </tr>
@@ -699,6 +739,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#exported"><code class="language-text">exported</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Naming and commenting conventions on exported symbols.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -706,6 +747,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#file-header"><code class="language-text">file-header</code></a></td>
 <td align="center">string (defaults to none)</td>
 <td align="left">Header which each file should have.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -713,6 +755,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#file-length-limit"><code class="language-text">file-length-limit</code></a></td>
 <td align="center">map (optional)</td>
 <td align="left">Enforces a maximum number of lines per file</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -720,6 +763,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#filename-format"><code class="language-text">filename-format</code></a></td>
 <td align="center">regular expression (optional)</td>
 <td align="left">Enforces the formatting of filenames</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -727,6 +771,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#flag-parameter"><code class="language-text">flag-parameter</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on boolean parameters that create a control coupling</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -734,6 +779,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#forbidden-call-in-wg-go"><code class="language-text">forbidden-call-in-wg-go</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on forbidden calls inside calls to wg.Go</td>
+<td align="center">>= 1.25</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -741,6 +787,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#function-length"><code class="language-text">function-length</code></a></td>
 <td align="center">int, int (defaults to 50 statements, 75 lines)</td>
 <td align="left">Warns on functions exceeding the statements or lines max</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -748,6 +795,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#function-result-limit"><code class="language-text">function-result-limit</code></a></td>
 <td align="center">int (defaults to 3)</td>
 <td align="left">Specifies the maximum number of results a function can return</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -755,6 +803,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#get-return"><code class="language-text">get-return</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on getters that do not yield any result</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -762,6 +811,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#identical-branches"><code class="language-text">identical-branches</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots if-then-else statements with identical <code class="language-text">then</code> and <code class="language-text">else</code> branches</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -769,6 +819,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#identical-ifelseif-branches"><code class="language-text">identical-ifelseif-branches</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots <code class="language-text">if ... else if</code> chains with identical branches.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -776,6 +827,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#identical-ifelseif-conditions"><code class="language-text">identical-ifelseif-conditions</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots identical conditions in  <code class="language-text">if ... else if</code> chains.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -783,6 +835,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#identical-switch-branches"><code class="language-text">identical-switch-branches</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots <code class="language-text">switch</code> with identical branches.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -790,6 +843,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#identical-switch-conditions"><code class="language-text">identical-switch-conditions</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots identical conditions in case clauses of <code class="language-text">switch</code> statements.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -797,6 +851,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#if-return"><code class="language-text">if-return</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Redundant if when returning an error.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -804,6 +859,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#import-alias-naming"><code class="language-text">import-alias-naming</code></a></td>
 <td align="center">string or map[string]string (defaults to allow regex pattern <code class="language-text">^[a-z][a-z0-9]{0,}$</code>)</td>
 <td align="left">Conventions around the naming of import aliases.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -811,6 +867,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#import-shadowing"><code class="language-text">import-shadowing</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots identifiers that shadow an import</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -818,6 +875,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#imports-blocklist"><code class="language-text">imports-blocklist</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Disallows importing the specified packages</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -825,6 +883,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#increment-decrement"><code class="language-text">increment-decrement</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Use <code class="language-text">i++</code> and <code class="language-text">i--</code> instead of <code class="language-text">i += 1</code> and <code class="language-text">i -= 1</code>.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -832,6 +891,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#indent-error-flow"><code class="language-text">indent-error-flow</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Prevents redundant else statements.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -839,13 +899,23 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#inefficient-map-lookup"><code class="language-text">inefficient-map-lookup</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots iterative searches for a key in a map</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">yes</td>
 </tr>
 <tr>
 <td><a href="/r/#line-length-limit"><code class="language-text">line-length-limit</code></a></td>
-<td align="center">int (defaults to 80)</td>
-<td align="left">Specifies the maximum number of characters in a line</td>
+<td align="center">int or map</td>
+<td align="left">Specifies the maximum number of characters in a line, with optional per-line exclusions</td>
+<td align="center">1.0</td>
+<td align="center">no</td>
+<td align="center">no</td>
+</tr>
+<tr>
+<td><a href="/r/#marshal-receiver"><code class="language-text">marshal-receiver</code></a></td>
+<td align="center">n/a</td>
+<td align="left">Checks receiver type consistency for common marshal/unmarshal methods.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -853,6 +923,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#max-control-nesting"><code class="language-text">max-control-nesting</code></a></td>
 <td align="center">int (defaults to 5)</td>
 <td align="left">Sets restriction for maximum nesting of control structures.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -860,6 +931,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#max-public-structs"><code class="language-text">max-public-structs</code></a></td>
 <td align="center">int (defaults to 5)</td>
 <td align="left">The maximum number of public structs in a file.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -867,6 +939,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#modifies-parameter"><code class="language-text">modifies-parameter</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on assignments to function parameters</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -874,13 +947,23 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#modifies-value-receiver"><code class="language-text">modifies-value-receiver</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on assignments to value-passed method receivers</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">yes</td>
+</tr>
+<tr>
+<td><a href="/r/#multiline-if-init"><code class="language-text">multiline-if-init</code></a></td>
+<td align="center">n/a</td>
+<td align="left">Flags <code class="language-text">if</code> statements whose init clause spans multiple lines</td>
+<td align="center">1.0</td>
+<td align="center">no</td>
+<td align="center">no</td>
 </tr>
 <tr>
 <td><a href="/r/#nested-structs"><code class="language-text">nested-structs</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on structs within structs</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -888,6 +971,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#optimize-operands-order"><code class="language-text">optimize-operands-order</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Checks inefficient conditional expressions</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -895,6 +979,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#package-comments"><code class="language-text">package-comments</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Package commenting conventions.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -902,6 +987,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#package-naming"><code class="language-text">package-naming</code></a></td>
 <td align="center">map</td>
 <td align="left">Checks that package names follow Go conventions and best practices</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -909,6 +995,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#package-directory-mismatch"><code class="language-text">package-directory-mismatch</code></a></td>
 <td align="center">string</td>
 <td align="left">Checks that package name matches containing directory name</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -916,6 +1003,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#range-val-address"><code class="language-text">range-val-address</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns if address of range value is used dangerously</td>
+<td align="center">&#x3C; 1.22</td>
 <td align="center">no</td>
 <td align="center">yes</td>
 </tr>
@@ -923,6 +1011,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#range-val-in-closure"><code class="language-text">range-val-in-closure</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns if range value is used in a closure dispatched as goroutine</td>
+<td align="center">&#x3C; 1.22</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -930,6 +1019,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#range"><code class="language-text">range</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Prevents redundant variables when iterating over a collection.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -937,6 +1027,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#receiver-naming"><code class="language-text">receiver-naming</code></a></td>
 <td align="center">map (optional)</td>
 <td align="left">Conventions around the naming of receivers.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -944,6 +1035,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#redefines-builtin-id"><code class="language-text">redefines-builtin-id</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on redefinitions of builtin identifiers</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -951,6 +1043,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#redundant-build-tag"><code class="language-text">redundant-build-tag</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns about redundant <code class="language-text">// +build</code> comment lines</td>
+<td align="center">>= 1.17</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -958,6 +1051,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#redundant-import-alias"><code class="language-text">redundant-import-alias</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on import aliases matching the imported package name</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -965,6 +1059,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#redundant-test-main-exit"><code class="language-text">redundant-test-main-exit</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Suggests removing <code class="language-text">Exit</code> call in <code class="language-text">TestMain</code> function for test files</td>
+<td align="center">>= 1.15</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -972,6 +1067,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#string-format"><code class="language-text">string-format</code></a></td>
 <td align="center">map</td>
 <td align="left">Warns on specific string literals that fail one or more user-configured regular expressions</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -979,6 +1075,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#string-of-int"><code class="language-text">string-of-int</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on suspicious casts from int to string</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">yes</td>
 </tr>
@@ -986,6 +1083,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#struct-tag"><code class="language-text">struct-tag</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Checks common struct tags like <code class="language-text">json</code>, <code class="language-text">xml</code>, <code class="language-text">yaml</code></td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -993,6 +1091,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#superfluous-else"><code class="language-text">superfluous-else</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Prevents redundant else statements (extends <a href="/r/#indent-error-flow"><code class="language-text">indent-error-flow</code></a>)</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1000,6 +1099,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#time-date"><code class="language-text">time-date</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Reports bad usage of <code class="language-text">time.Date</code>.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1007,6 +1107,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#time-equal"><code class="language-text">time-equal</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Suggests to use <code class="language-text">time.Time.Equal</code> instead of <code class="language-text">==</code> and <code class="language-text">!=</code> for equality check time.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">yes</td>
 </tr>
@@ -1014,6 +1115,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#time-naming"><code class="language-text">time-naming</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Conventions around the naming of time variables.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">yes</td>
 </tr>
@@ -1021,6 +1123,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unchecked-type-assertion"><code class="language-text">unchecked-type-assertion</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Disallows type assertions without checking the result.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1028,6 +1131,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unconditional-recursion"><code class="language-text">unconditional-recursion</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on function calls that will lead to (direct) infinite recursion</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1035,6 +1139,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unexported-naming"><code class="language-text">unexported-naming</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on wrongly named un-exported symbols</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1042,6 +1147,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unexported-return"><code class="language-text">unexported-return</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns when a public return is from unexported type.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">yes</td>
 </tr>
@@ -1049,6 +1155,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unhandled-error"><code class="language-text">unhandled-error</code></a></td>
 <td align="center">[]string</td>
 <td align="left">Warns on unhandled errors returned by function calls</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">yes</td>
 </tr>
@@ -1056,6 +1163,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unnecessary-if"><code class="language-text">unnecessary-if</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Identifies <code class="language-text">if-else</code> statements that can be replaced by simpler statements</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1063,6 +1171,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unnecessary-format"><code class="language-text">unnecessary-format</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Identifies calls to formatting functions where the format string does not contain any formatting verbs</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1070,6 +1179,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unnecessary-stmt"><code class="language-text">unnecessary-stmt</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Suggests removing or simplifying unnecessary statements</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1077,6 +1187,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unreachable-code"><code class="language-text">unreachable-code</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on unreachable code</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1084,6 +1195,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unsecure-url-scheme"><code class="language-text">unsecure-url-scheme</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Checks for usage of potentially unsecure URL schemes.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1091,6 +1203,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unused-parameter"><code class="language-text">unused-parameter</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Suggests to rename or remove unused function parameters</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1098,6 +1211,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#unused-receiver"><code class="language-text">unused-receiver</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Suggests to rename or remove unused method receivers</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1105,6 +1219,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#use-any"><code class="language-text">use-any</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Proposes to replace <code class="language-text">interface{}</code> with its alias <code class="language-text">any</code></td>
+<td align="center">>= 1.18</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1112,6 +1227,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#use-errors-new"><code class="language-text">use-errors-new</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Spots calls to <code class="language-text">fmt.Errorf</code> that can be replaced by <code class="language-text">errors.New</code></td>
+<td align="center">&#x3C; 1.26</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1119,6 +1235,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#use-fmt-print"><code class="language-text">use-fmt-print</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Proposes to replace calls to built-in <code class="language-text">print</code> and <code class="language-text">println</code> with their equivalents from <code class="language-text">fmt</code>.</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1126,6 +1243,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#use-slices-sort"><code class="language-text">use-slices-sort</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Proposes to replace calls to <code class="language-text">sort.Ints</code>, <code class="language-text">sort.Strings</code> and the like with their equivalents from <code class="language-text">slices</code> package.</td>
+<td align="center">>= 1.21</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1133,6 +1251,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#use-waitgroup-go"><code class="language-text">use-waitgroup-go</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Proposes to replace <code class="language-text">wg.Add ... go {... wg.Done ...}</code> idiom with <code class="language-text">wg.Go</code></td>
+<td align="center">>= 1.25</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1140,6 +1259,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#useless-break"><code class="language-text">useless-break</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on useless <code class="language-text">break</code> statements in case clauses</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1147,6 +1267,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#useless-fallthrough"><code class="language-text">useless-fallthrough</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on useless <code class="language-text">fallthrough</code> statements in case clauses</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
@@ -1154,6 +1275,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#var-declaration"><code class="language-text">var-declaration</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Reduces redundancies around variable declaration.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">yes</td>
 </tr>
@@ -1161,6 +1283,7 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#var-naming"><code class="language-text">var-naming</code></a></td>
 <td align="center">allowlist &#x26; blocklist of initialisms</td>
 <td align="left">Naming rules.</td>
+<td align="center">1.0</td>
 <td align="center">yes</td>
 <td align="center">no</td>
 </tr>
@@ -1168,22 +1291,18 @@ b. <code class="language-text">&quot;&quot;</code> (empty) pattern excludes noth
 <td><a href="/r/#waitgroup-by-value"><code class="language-text">waitgroup-by-value</code></a></td>
 <td align="center">n/a</td>
 <td align="left">Warns on functions taking sync.WaitGroup as a by-value parameter</td>
+<td align="center">1.0</td>
 <td align="center">no</td>
 <td align="center">no</td>
 </tr>
 </tbody>
 </table>
+<p> The rules ported from <code class="language-text">golint</code> are left unchanged and indicated in the "golint" column.</p>
+<p> The rules in the "Typed" column use the type system, which depends on the <code class="language-text">GOROOT</code> and <code class="language-text">GOPATH</code> environment variables.
+Therefore, if <code class="language-text">revive</code> binary is built with <code class="language-text">-trimpath</code> or run on GitHub Actions, these rules may not work as expected.
+See <a href="https://github.com/mgechev/revive/issues/1277">#1277</a> for details.</p>
 <h2 id="configurable-rules"><a href="#configurable-rules" aria-label="configurable rules permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configurable rules</h2>
-<p>Here you can find how you can configure some existing rules.
-Rule configuration options are documented using the <code class="language-text">kebab-case</code> format (e.g., <code class="language-text">max-lit-count</code>, <code class="language-text">allow-strs</code>, <code class="language-text">skip-comments</code>), and this format is preferred.
-For backward compatibility, <code class="language-text">camelCase</code> (e.g., <code class="language-text">maxLitCount</code>, <code class="language-text">allowStrs</code>, <code class="language-text">skipComments</code>)
-and <code class="language-text">lowercase</code> (e.g., <code class="language-text">maxlitcount</code>, <code class="language-text">allowstrs</code>, <code class="language-text">skipcomments</code>) formats are still supported but are deprecated.</p>
-<h3 id="var-naming"><a href="#var-naming" aria-label="var naming permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code class="language-text">var-naming</code></h3>
-<p>This rule accepts two slices of strings, an allowlist and a blocklist of initialisms. By default, the rule behaves exactly as the alternative
-in <code class="language-text">golint</code> but optionally, you can relax it (see <a href="https://github.com/golang/lint/issues/89">golint/lint/issues/89</a>)</p>
-<div class="gatsby-highlight" data-language="toml"><pre class="language-toml"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">rule.var-naming</span><span class="token punctuation">]</span>
-<span class="token key property">arguments</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"ID"</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token string">"VM"</span><span class="token punctuation">]</span><span class="token punctuation">]</span></code></pre></div>
-<p>This way, revive will not warn for an identifier called <code class="language-text">customId</code> but will warn that <code class="language-text">customVm</code> should be called <code class="language-text">customVM</code>.</p>
+<p>A lot of rules can be configured. See <a href="./RULES_DESCRIPTIONS.md">RULES_DESCRIPTIONS.md</a> for the list of all configurable rules and their options.</p>
 <h2 id="available-formatters"><a href="#available-formatters" aria-label="available formatters permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Available Formatters</h2>
 <p>This section lists all the available formatters and provides a screenshot for each one.</p>
 <h3 id="friendly"><a href="#friendly" aria-label="friendly permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Friendly</h3>
@@ -1477,6 +1596,23 @@ where STDOUT is being piped to another command.</p>
 <p><em>Open a PR to add your project</em>.</p>
 <h2 id="contributors"><a href="#contributors" aria-label="contributors permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Contributors</h2>
 <h3 id="maintainers"><a href="#maintainers" aria-label="maintainers permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Maintainers</h3>
+<p>| <a href="https://github.com/mgechev"><img alt="mgechev" src="https://avatars.githubusercontent.com/u/455023?v=4&amp;s=100" width="100"></a> | <a href="https://github.com/chavacava"><img alt="chavacava" src="https://avatars.githubusercontent.com/u/25788468?v=4&amp;s=100" width="100"></a> | <a href="https://github.com/denisvmedia"><img alt="denisvmedia" src="https://avatars.githubusercontent.com/u/5462781?v=4&amp;s=100" width="100"></a> | <a href="https://github.com/alexhub"><img alt="alexandear" src="https://avatars.githubusercontent.com/u/3228886?v=4&amp;s=100" width="100"></a> - ShellHub enables teams to easily access any Linux device behind firewall and NAT.</p>
+<ul>
+<li><a href="https://github.com/TheThingsNetwork/lorawan-stack"><code class="language-text">lorawan-stack</code></a> - The Things Network Stack for LoRaWAN V3</li>
+<li><a href="https://github.com/appleboy/gin-jwt"><code class="language-text">gin-jwt</code></a> - This is a JWT middleware for Gin framework.</li>
+<li><a href="https://github.com/appleboy/gofight"><code class="language-text">gofight</code></a> - Testing API Handler written in Golang.</li>
+<li><a href="https://github.com/Clivern/Beaver"><code class="language-text">Beaver</code></a> - A Real Time Messaging Server.</li>
+<li><a href="https://github.com/go-ggz/ggz"><code class="language-text">ggz</code></a> - An URL shortener service written in Golang</li>
+<li><a href="https://www.codeac.io?ref=revive"><code class="language-text">Codeac.io</code></a> - Automated code review service integrates with GitHub, Bitbucket and GitLab (even self-hosted) and helps you fight technical debt.</li>
+<li><a href="https://github.com/apache/incubator-devlake"><code class="language-text">DevLake</code></a> - Apache DevLake is an open-source dev data platform to ingest, analyze, and visualize the fragmented data from DevOps tools，which can distill insights to improve engineering productivity.</li>
+<li><a href="https://github.com/cinar/checker"><code class="language-text">checker</code></a> - Checker helps validating user input through rules defined in struct tags or directly through functions.</li>
+<li><a href="https://github.com/milvus-io/milvus"><code class="language-text">milvus</code></a> - A cloud-native vector database, storage for next generation AI applications.</li>
+<li><a href="https://github.com/cinar/indicator"><code class="language-text">indicator</code></a> - Indicator provides various technical analysis indicators, strategies, and a backtesting framework.</li>
+</ul>
+<!-- markdownlint-enable MD013 -->
+<p><em>Open a PR to add your project</em>.</p>
+<h2 id="contributors-1"><a href="#contributors-1" aria-label="contributors 1 permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Contributors</h2>
+<h3 id="maintainers-1"><a href="#maintainers-1" aria-label="maintainers 1 permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Maintainers</h3>
 <table>
 <thead>
 <tr>
@@ -1500,48 +1636,7 @@ where STDOUT is being piped to another command.</p>
 <a href="https://github.com/mgechev/revive/graphs/contributors">
   <img alt="All Contributors" src="https://contrib.rocks/image?repo=mgechev/revive&amp;max=500">
 </a>
-<h2 id="star-history"><a href="#star-history" aria-label="star history permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Star History</h2>
-<a href="https://www.star-history.com/#mgechev/revive&amp;type=date&amp;legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=mgechev/revive&amp;type=date&amp;theme=dark&amp;legend=top-left">
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=mgechev/revive&amp;type=date&amp;legend=top-left">
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=mgechev/revive&amp;type=date&amp;legend=top-left">
- </picture>
-</a>
 <h2 id="license"><a href="#license" aria-label="license permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>License</h2>
-<p>MIT</p>
-<table>
-<thead>
-<tr>
-<th>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img alt="mgechev" src="https://avatars.githubusercontent.com/u/455023?v=4&amp;s=100" width="100">](<a href="https://github.com/mgechev">https://github.com/mgechev</a>)</th>
-<th><a href="https://github.com/chavacava"><img alt="chavacava" src="https://avatars.githubusercontent.com/u/25788468?v=4&amp;s=100" width="100"></a></th>
-<th><a href="https://github.com/denisvmedia"><img alt="denisvmedia" src="https://avatars.githubusercontent.com/u/5462781?v=4&amp;s=100" width="100"></a></th>
-<th><a href="https://github.com/alexandear"><img alt="alexandear" src="https://avatars.githubusercontent.com/u/3228886?v=4&amp;s=100" width="100"></a></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="https://github.com/mgechev">mgechev</a></td>
-<td><a href="https://github.com/chavacava">chavacava</a></td>
-<td><a href="https://github.com/denisvmedia">denisvmedia</a></td>
-<td><a href="https://github.com/alexandear">alexandear</a></td>
-</tr>
-</tbody>
-</table>
-<h3 id="all-1"><a href="#all-1" aria-label="all 1 permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>All</h3>
-<p>This project exists thanks to all the people who contribute.</p>
-<a href="https://github.com/mgechev/revive/graphs/contributors">
-  <img alt="All Contributors" src="https://contrib.rocks/image?repo=mgechev/revive&amp;max=500">
-</a>
-<h2 id="star-history-1"><a href="#star-history-1" aria-label="star history 1 permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Star History</h2>
-<a href="https://www.star-history.com/#mgechev/revive&amp;type=date&amp;legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=mgechev/revive&amp;type=date&amp;theme=dark&amp;legend=top-left">
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=mgechev/revive&amp;type=date&amp;legend=top-left">
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=mgechev/revive&amp;type=date&amp;legend=top-left">
- </picture>
-</a>
-<h2 id="license-1"><a href="#license-1" aria-label="license 1 permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>License</h2>
 <p>MIT</p></div></div></div></div></div></div></div></div></div><script>
   
   
