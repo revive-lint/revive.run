@@ -1,0 +1,92 @@
+# Hugo configuration for https://revive.run/.
+#
+# The site content is generated from the mgechev/revive repository by `go run ./scripts/website`, see README.md.
+
+baseURL: https://revive.run/
+title: revive
+locale: en-US
+enableEmoji: true
+
+# The generated site is committed to docs/ and served by GitHub Pages from there.
+publishDir: docs
+
+# Theme: Lotus Docs, imported as a Hugo Module (see go.mod / go.sum).
+module:
+  hugoVersion:
+    extended: true
+    min: '0.140.0'
+  imports:
+    - path: github.com/colinwilson/lotusdocs
+    - path: github.com/gohugoio/hugo-mod-bootstrap-scss/v5
+  mounts:
+    - source: assets
+      target: assets
+    - source: static
+      target: static
+    # Images generated from revive's assets/, also as page resources for the landing page
+    - source: static/images
+      target: assets/images
+    # GitHub Pages reads the custom domain from CNAME in the published docs/
+    - source: CNAME
+      target: static/CNAME
+
+markup:
+  goldmark:
+    parser:
+      # GitHub-style heading ids (e.g. #add-constant): the /r/#<rule> links
+      # printed by the revive binary and used all over the web rely on them.
+      autoHeadingID: true
+      autoHeadingIDType: github
+    renderer:
+      # The README-derived docs page contains raw HTML.
+      unsafe: true
+  highlight:
+    # Syntax highlighting is done client-side by Prism (params.docs.prism).
+    codeFences: false
+  tableOfContents:
+    startLevel: 2
+    endLevel: 3
+
+params:
+  description: >-
+    Fast, configurable, extensible, and beautiful linter for Go.
+
+  footer:
+    copyright: '© :YEAR: [revive](https://github.com/mgechev/revive) contributors.'
+
+  social:
+    github: mgechev/revive
+
+  docs:
+    title: revive
+    darkMode: true
+    prism: true
+    sidebarIcons: true
+    breadcrumbs: false
+    editPage: false
+    lastMod: false
+    descriptions: true
+    intLinkTooltip: false
+    extLinkNewTab: false
+
+  flexsearch:
+    enabled: true
+
+menu:
+  primary:
+    - name: Docs
+      url: /docs/
+      identifier: docs
+      weight: 10
+    - name: Rules
+      url: /r/
+      identifier: rules
+      weight: 20
+    - name: Source Code
+      url: https://github.com/mgechev/revive
+      identifier: source-code
+      weight: 30
+    - name: Website
+      url: https://github.com/mgechev/revive.run
+      identifier: website
+      weight: 40
