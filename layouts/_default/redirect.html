@@ -1,0 +1,14 @@
+{{/* The theme sidebar only links local pages: a page with this layout redirects to params.redirect. */}}
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+<head>
+  <meta charset="utf-8">
+  <title>{{ .Title }}</title>
+  <link rel="canonical" href="{{ .Params.redirect }}">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url={{ .Params.redirect }}">
+</head>
+<body>
+  <a href="{{ .Params.redirect }}">{{ .Params.redirect }}</a>
+</body>
+</html>

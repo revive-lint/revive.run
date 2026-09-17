@@ -2,29 +2,82 @@ name: Build
 
 on:
   workflow_dispatch:
-  push:
-    branches: [master]
+    inputs:
+      force:
+        description: Rebuild even if the website is up to date with the latest revive release
+        type: boolean
+        default: false
+  schedule:
+    # Twice a month: rebuild the website if mgechev/revive has a new release
+    - cron: '0 6 1,15 * *'
+
+# Don't let two runs commit at the same time.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
+      # Commit and push docs/
       contents: write
+      # Update the REVIVE_VERSION repository variable
+      actions: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
 
-      - uses: actions/setup-node@v4
+      - name: Check for a new revive release
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT: ${{ vars.REVIVE_VERSION }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          latest=$(gh release view --repo mgechev/revive --json tagName --jq .tagName)
+          echo "current=$CURRENT latest=$latest force=$FORCE"
+          if [ "$CURRENT" = "$latest" ] && [ "$FORCE" != "true" ]; then
+            echo "Website is up to date, nothing to do"
+            exit 0
+          fi
+          echo "tag=$latest" >> "$GITHUB_OUTPUT"
+
+      - if: steps.release.outputs.tag
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
-          node-version: 11.15.x
+          repository: mgechev/revive
+          ref: ${{ steps.release.outputs.tag }}
+          path: revive
+          persist-credentials: false
 
-      - run: npm ci
-
-      - run: npm run build
-
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - if: steps.release.outputs.tag
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
-          commit_message: "docs: update"
+          go-version: stable
+
+      - if: steps.release.outputs.tag
+        uses: peaceiris/actions-hugo@2752ce1d29631191ea3f27c23495fa06139a5b78 # v3.2.1
+        with:
+          hugo-version: '0.165.0'
+          extended: true
+
+      - if: steps.release.outputs.tag
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          go run ./scripts/website
+          hugo --gc --minify --cleanDestinationDir
+
+      - if: steps.release.outputs.tag
+        uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 # v6.0.1
+        with:
+          commit_message: "docs: update to revive ${{ steps.release.outputs.tag }}"
+          file_pattern: docs
+
+      - if: steps.release.outputs.tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: gh variable set REVIVE_VERSION --body "$TAG"

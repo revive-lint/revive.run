@@ -1,0 +1,81 @@
+# Landing page of https://revive.run/, rendered by the Lotus Docs theme.
+# Template blocks require a 'weight' parameter so they're correctly ordered.
+
+hero:
+  enable: true
+  weight: 10
+  template: hero
+
+  title: "Revive"
+  subtitle: "Fast, configurable, extensible, and beautiful linter for Go."
+
+  image:
+    path: "images"
+    filename: "logo.png"
+    alt: "Revive logo by Georgi Serev"
+    width: 200
+
+  ctaButton:
+    icon: rocket_launch
+    btnText: "Get started"
+    url: "/docs/"
+  cta2Button:
+    icon: rule
+    btnText: "Rules"
+    url: "/r/"
+
+featureGrid:
+  enable: true
+  weight: 20
+  template: feature grid
+
+  title: Why revive?
+
+  items:
+    - title: 100+ rules
+      icon: rule
+      description: Rules covering style and naming, complexity, errors, and Go idioms.
+      ctaLink:
+        text: learn more
+        url: /r/
+
+    - title: Configurable
+      icon: tune
+      description: Enable, disable, and configure rules with a TOML file. Set the severity and the exit code per rule.
+      ctaLink:
+        text: learn more
+        url: /docs/#configuration
+
+    - title: Extensible
+      icon: extension
+      description: Write your own rules and formatters on top of the revive framework.
+      ctaLink:
+        text: learn more
+        url: /docs/rule/
+
+    - title: Formatters
+      icon: format_list_bulleted
+      description: Friendly, stylish, plain, unix, JSON, NDJSON, checkstyle, and SARIF output out of the box.
+      ctaLink:
+        text: learn more
+        url: /docs/#available-formatters
+
+    - title: Inline control
+      icon: block
+      description: Disable a rule or the whole linter for a file or a range of lines with comments, not only in generated files.
+      ctaLink:
+        text: learn more
+        url: /docs/#comment-directives
+
+    - title: Fast
+      icon: speed
+      description: Lints large codebases in seconds, and even faster with type checking disabled.
+      ctaLink:
+        text: learn more
+        url: /docs/#speed-comparison
+
+# Disable the example sections of the theme's own data/landing.yaml, which Hugo merges with this file
+imageText:
+  enable: false
+imageCompare:
+  enable: false
