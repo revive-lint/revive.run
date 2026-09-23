@@ -23,8 +23,6 @@ jobs:
     permissions:
       # Commit and push docs/
       contents: write
-      # Update the REVIVE_VERSION repository variable
-      actions: write
 
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
@@ -33,12 +31,12 @@ jobs:
         id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CURRENT: ${{ vars.REVIVE_VERSION }}
           FORCE: ${{ inputs.force }}
         run: |
+          current=$(cat REVIVE_VERSION 2>/dev/null || true)
           latest=$(gh release view --repo mgechev/revive --json tagName --jq .tagName)
-          echo "current=$CURRENT latest=$latest force=$FORCE"
-          if [ "$CURRENT" = "$latest" ] && [ "$FORCE" != "true" ]; then
+          echo "current=$current latest=$latest force=$FORCE"
+          if [ "$current" = "$latest" ] && [ "$FORCE" != "true" ]; then
             echo "Website is up to date, nothing to do"
             exit 0
           fi
@@ -69,15 +67,10 @@ jobs:
         run: |
           go run ./scripts/website
           hugo --gc --minify --cleanDestinationDir
+          echo "$TAG" > REVIVE_VERSION
 
       - if: steps.release.outputs.tag
         uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 # v6.0.1
         with:
           commit_message: "docs: update to revive ${{ steps.release.outputs.tag }}"
-          file_pattern: docs
-
-      - if: steps.release.outputs.tag
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ steps.release.outputs.tag }}
-        run: gh variable set REVIVE_VERSION --body "$TAG"
+          file_pattern: docs REVIVE_VERSION
