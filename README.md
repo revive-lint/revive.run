@@ -12,9 +12,9 @@ The generated site is committed to `docs/` and served by GitHub Pages from the `
 
 ## Publishing a release
 
-The `REVIVE_VERSION` repository variable holds the revive release the website was built from.
+The `REVIVE_VERSION` file holds the revive release the website was built from.
 The [Build workflow](.github/workflows/build.yaml) runs twice a month (and on `workflow_dispatch`):
-if `mgechev/revive` has a newer release, it checks out that tag, regenerates the site, commits `docs/` to `master`, and updates the variable.
+if `mgechev/revive` has a newer release, it checks out that tag, regenerates the site, and commits `docs/` and `REVIVE_VERSION` to `master`.
 Otherwise it does nothing.
 
 To publish hand-written changes (landing page, guides, layouts, config) without a new revive release, run the workflow manually with the `force` input checked.
@@ -64,6 +64,7 @@ Hand-written:
 - `assets/images/logos/` — logo used in the header
 - `static/` — favicons, `site.webmanifest` and `sw.js`
 - `scripts/website/` — content generator
+- `REVIVE_VERSION` — revive release the published site is built from, updated by the Build workflow
 
 Generated (git-ignored):
 
