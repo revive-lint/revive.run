@@ -131,8 +131,8 @@ func stripLeadingH1(doc string) string {
 func rewriteReadmeLinks(doc string) string {
 	doc = rulesFileLinkRE.ReplaceAllString(doc, "](/r/#${1})")
 	doc = rulesFilePlainLinkRE.ReplaceAllString(doc, "](/r/)")
-	doc = relativeMdLinkRE.ReplaceAllString(doc, "](https://github.com/mgechev/revive/blob/master/${1})")
-	doc = repoFileLinkRE.ReplaceAllString(doc, "](https://github.com/mgechev/revive/blob/master/${1})")
+	doc = relativeMdLinkRE.ReplaceAllString(doc, "](https://github.com/revive-lint/revive/blob/master/${1})")
+	doc = repoFileLinkRE.ReplaceAllString(doc, "](https://github.com/revive-lint/revive/blob/master/${1})")
 	doc = assetRefRE.ReplaceAllString(doc, "${1}/images/")
 	return doc
 }

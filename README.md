@@ -2,7 +2,7 @@
 
 Source of <https://revive.run/>, a [Hugo](https://gohugo.io/) site using the [Lotus Docs](https://github.com/colinwilson/lotusdocs) theme.
 
-Most of the content is generated from [mgechev/revive](https://github.com/mgechev/revive):
+Most of the content is generated from [revive-lint/revive](https://github.com/revive-lint/revive):
 
 - `/docs` from `README.md`
 - `/r` from `RULES_DESCRIPTIONS.md`
@@ -14,7 +14,7 @@ The generated site is committed to `docs/` and served by GitHub Pages from the `
 
 The `REVIVE_VERSION` file holds the revive release the website was built from.
 The [Build workflow](.github/workflows/build.yaml) runs twice a month (and on `workflow_dispatch`):
-if `mgechev/revive` has a newer release, it checks out that tag, regenerates the site, and commits `docs/` and `REVIVE_VERSION` to `master`.
+if `revive-lint/revive` has a newer release, it checks out that tag, regenerates the site, and commits `docs/` and `REVIVE_VERSION` to `master`.
 Otherwise it does nothing.
 
 To publish hand-written changes (landing page, guides, layouts, config) without a new revive release, run the workflow manually with the `force` input checked.
@@ -26,7 +26,7 @@ Requires [Go](https://go.dev/) and [Hugo extended](https://gohugo.io/installatio
 1. Get the revive documentation:
 
 ```sh
-git clone --depth 1 https://github.com/mgechev/revive
+git clone --depth 1 https://github.com/revive-lint/revive
 ```
 
 2. Generate the content:

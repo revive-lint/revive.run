@@ -1,6 +1,6 @@
 # Hugo configuration for https://revive.run/.
 #
-# The site content is generated from the mgechev/revive repository by `go run ./scripts/website`, see README.md.
+# The site content is generated from the revive-lint/revive repository by `go run ./scripts/website`, see README.md.
 
 baseURL: https://revive.run/
 title: revive
@@ -52,10 +52,10 @@ params:
     Fast, configurable, extensible, and beautiful linter for Go.
 
   footer:
-    copyright: '© :YEAR: [revive](https://github.com/mgechev/revive) contributors.'
+    copyright: '© :YEAR: [revive](https://github.com/revive-lint/revive) contributors.'
 
   social:
-    github: mgechev/revive
+    github: revive-lint/revive
 
   docs:
     title: revive
@@ -83,10 +83,10 @@ menu:
       identifier: rules
       weight: 20
     - name: Source Code
-      url: https://github.com/mgechev/revive
+      url: https://github.com/revive-lint/revive
       identifier: source-code
       weight: 30
     - name: Website
-      url: https://github.com/mgechev/revive.run
+      url: https://github.com/revive-lint/revive.run
       identifier: website
       weight: 40

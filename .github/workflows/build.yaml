@@ -8,7 +8,7 @@ on:
         type: boolean
         default: false
   schedule:
-    # Twice a month: rebuild the website if mgechev/revive has a new release
+    # Twice a month: rebuild the website if revive-lint/revive has a new release
     - cron: '0 6 1,15 * *'
 
 # Don't let two runs commit at the same time.
@@ -34,7 +34,7 @@ jobs:
           FORCE: ${{ inputs.force }}
         run: |
           current=$(cat REVIVE_VERSION 2>/dev/null || true)
-          latest=$(gh release view --repo mgechev/revive --json tagName --jq .tagName)
+          latest=$(gh release view --repo revive-lint/revive --json tagName --jq .tagName)
           echo "current=$current latest=$latest force=$FORCE"
           if [ "$current" = "$latest" ] && [ "$FORCE" != "true" ]; then
             echo "Website is up to date, nothing to do"
@@ -45,7 +45,7 @@ jobs:
       - if: steps.release.outputs.tag
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
-          repository: mgechev/revive
+          repository: revive-lint/revive
           ref: ${{ steps.release.outputs.tag }}
           path: revive
           persist-credentials: false
