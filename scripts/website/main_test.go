@@ -157,12 +157,12 @@ Look at [this file](/formatter/json.go) for an example.
 		`<img src="/images/logo.png"`,
 		"[available rules](/r/)",
 		"](/r/#add-constant)",
-		"[DEVELOPING.md](https://github.com/mgechev/revive/blob/master/DEVELOPING.md)",
-		"[CONTRIBUTING.md](https://github.com/mgechev/revive/blob/master/CONTRIBUTING.md)",
+		"[DEVELOPING.md](https://github.com/revive-lint/revive/blob/master/DEVELOPING.md)",
+		"[CONTRIBUTING.md](https://github.com/revive-lint/revive/blob/master/CONTRIBUTING.md)",
 		"[Configuration](#configuration)",
 		"![demo](/images/demo.svg)",
 		"![friendly](/images/formatter-friendly.png)",
-		"[this file](https://github.com/mgechev/revive/blob/master/formatter/json.go)",
+		"[this file](https://github.com/revive-lint/revive/blob/master/formatter/json.go)",
 		"## Usage",
 	} {
 		if !strings.Contains(got, wanted) {

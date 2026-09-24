@@ -1,6 +1,6 @@
-// Program website generates the content of https://revive.run/ from the documentation of the mgechev/revive repository.
+// Program website generates the content of https://revive.run/ from the documentation of the revive-lint/revive repository.
 //
-// Run it from the repository root, with a checkout of mgechev/revive in the directory given by -src:
+// Run it from the repository root, with a checkout of revive-lint/revive in the directory given by -src:
 //
 //	go run ./scripts/website -src revive
 //
@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	src := flag.String("src", "revive", "path to a checkout of github.com/mgechev/revive")
+	src := flag.String("src", "revive", "path to a checkout of github.com/revive-lint/revive")
 	flag.Parse()
 	if err := run(*src); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
