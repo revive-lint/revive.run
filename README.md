@@ -58,7 +58,7 @@ Hand-written:
 - `hugo.yaml`, `go.mod`, `go.sum` — site and theme configuration
 - `data/landing.yaml` — homepage
 - `content/docs/rule.md`, `content/docs/formatter.md` — custom rule/formatter guides
-- `content/docs/api.md` — sidebar entry redirecting to [pkg.go.dev](https://pkg.go.dev/github.com/revive-lint/revive)
+- `content/docs/api.md` — sidebar entry redirecting to [pkg.go.dev](https://pkg.go.dev/github.com/mgechev/revive)
   (the theme sidebar only links local pages, see `layouts/_default/redirect.html`)
 - `layouts/partials/head.html`, `layouts/partials/docs/head.html` — theme head partials without Lotus Docs' hardcoded description/author metadata
 - `assets/images/logos/` — logo used in the header
