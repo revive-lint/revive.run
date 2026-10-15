@@ -1,0 +1,28 @@
+{{- /* Overrides the lotusdocs hook, which pipes every image through resources.GetRemote:
+       that makes the build depend on each remote host, and a slow or rate-limiting one fails it.
+       Remote images are left to the browser; local ones keep the theme's behaviour. */ -}}
+{{- $remote := ne (urls.Parse .Destination).Scheme "" -}}
+{{- $resource := "" -}}
+{{- if not $remote -}}
+  {{- $resource = resources.Get .Destination -}}
+{{- end -}}
+{{- define "_partials/inline/image.html" -}}
+  {{- with .resource -}}
+    {{- if eq .MediaType.SubType "svg" -}}
+      {{- .Content | safeHTML -}}
+    {{- else -}}
+      <img src="{{ .RelPermalink | safeURL }}" alt="{{ $.text }}" width="{{ .Width }}" height="{{ .Height }}" loading="lazy">
+    {{- end -}}
+  {{- else -}}
+    <img src="{{ $.destination | safeURL }}" alt="{{ $.text }}" loading="lazy">
+  {{- end -}}
+{{- end -}}
+{{- $image := dict "resource" $resource "text" .PlainText "destination" .Destination -}}
+{{ with .Title }}
+  <figure>
+    {{ partial "inline/image.html" $image }}
+    <figcaption>{{ . | markdownify }}</figcaption>
+  </figure>
+{{ else }}
+  {{ partial "inline/image.html" $image }}
+{{ end }}
